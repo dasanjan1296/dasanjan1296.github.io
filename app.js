@@ -330,8 +330,34 @@
   /* =========================================================
      CAROUSELS
   ========================================================= */
+  const carouselRegistry = [];  // exposed for global keyboard nav
+
   const carousels = () => {
     $$('[data-carousel]').forEach(setup);
+
+    // Global ← → support — find whichever carousel is most visible
+    addEventListener('keydown', (e) => {
+      const tag = e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      // Skip if any overlay is open (palette uses ↑↓, but ← → would still hijack carousel)
+      if ($$('.overlay[aria-hidden="false"]').length) return;
+
+      let best = null, bestScore = 0;
+      const vh = innerHeight;
+      carouselRegistry.forEach(c => {
+        const r = c.root.getBoundingClientRect();
+        const visible = Math.max(0, Math.min(vh, r.bottom) - Math.max(0, r.top));
+        const score = visible / Math.max(1, Math.min(r.height, vh));
+        if (score > bestScore && score > 0.3) { bestScore = score; best = c; }
+      });
+      if (best) {
+        e.preventDefault();
+        Sound.tick();
+        best.go(best.index() + (e.key === 'ArrowRight' ? 1 : -1));
+      }
+    });
 
     function setup(root) {
       const viewport = $('.carousel-viewport', root);
@@ -439,6 +465,9 @@
 
       rebuildDots();
       update();
+
+      // Register for global keyboard nav
+      carouselRegistry.push({ root, go, index: () => index });
     }
   };
 
