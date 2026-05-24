@@ -547,21 +547,32 @@
     });
     document.body.appendChild(wrap);
 
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        const id = e.target.id;
-        const item = wrap.querySelector(`[data-id="${id}"]`);
-        const navItem = $(`.site-nav a[href="#${id}"]`);
-        if (!item) return;
-        if (e.isIntersecting) {
-          $$('.rail-item.is-active', wrap).forEach(x => x.classList.remove('is-active'));
-          item.classList.add('is-active');
-          $$('.site-nav a.is-current').forEach(x => x.classList.remove('is-current'));
-          navItem?.classList.add('is-current');
-        }
-      });
-    }, { threshold: 0.35, rootMargin: '-10% 0px -40% 0px' });
-    sections.forEach(id => { const s = document.getElementById(id); if (s) io.observe(s); });
+    // Scroll-position-based active detection — reliable for sections taller than viewport
+    const updateActive = () => {
+      const target = innerHeight * 0.3;  // section is active once its top crosses 30% from top
+      let active = sections[0];
+      for (const id of sections) {
+        const s = document.getElementById(id);
+        if (!s) continue;
+        const top = s.getBoundingClientRect().top;
+        if (top <= target) active = id;
+        else break;  // sections are ordered top→bottom in the DOM
+      }
+      $$('.rail-item.is-active', wrap).forEach(x => x.classList.remove('is-active'));
+      wrap.querySelector(`[data-id="${active}"]`)?.classList.add('is-active');
+      $$('.site-nav a.is-current').forEach(x => x.classList.remove('is-current'));
+      $(`.site-nav a[href="#${active}"]`)?.classList.add('is-current');
+    };
+
+    let ticking = false;
+    addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => { updateActive(); ticking = false; });
+        ticking = true;
+      }
+    }, { passive: true });
+    addEventListener('resize', () => requestAnimationFrame(updateActive));
+    updateActive();
   };
 
   /* =========================================================
