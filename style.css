@@ -838,6 +838,25 @@ body.boot-pending .hero-h1 .reveal-line { animation-play-state: paused; }
 .brand-logo-md img { height: 32px; }
 .brand-logo-lg img { height: 48px; }
 
+/* Variant for full-bleed app icons (Bimi, AstroMate) — no chip padding, just a rounded frame */
+.brand-logo-icon {
+  padding: 0;
+  background: transparent;
+  border: none;
+  overflow: hidden;
+  border-radius: 7px;
+  box-shadow: 0 2px 8px -2px rgba(0,0,0,0.25), 0 0 0 1px var(--line);
+}
+[data-theme="dark"] .brand-logo-icon {
+  box-shadow: 0 4px 12px -4px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+}
+.brand-logo-icon img {
+  border-radius: 7px;
+  height: 26px;
+  width: 26px;
+  object-fit: cover;
+}
+
 /* In headlines, ensure heights line up with caps */
 h2 .brand-logo, h3 .brand-logo { margin-bottom: 2px; }
 
