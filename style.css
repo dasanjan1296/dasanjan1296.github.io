@@ -283,15 +283,15 @@ kbd {
 #cursor-dot {
   width: 4px; height: 4px;
   background: #fff;
-  transition: transform 0.06s ease-out, width 0.18s, height 0.18s, background 0.2s;
+  transition: width 0.15s ease, height 0.15s ease, background 0.2s ease;
 }
 #cursor-ring {
   width: 18px; height: 18px;
   border: 1px solid #fff;
-  transition: transform 0.15s ease-out, width 0.25s, height 0.25s, opacity 0.2s;
+  transition: width 0.18s ease, height 0.18s ease, opacity 0.18s ease;
 }
 body.cursor-hover #cursor-dot { width: 0; height: 0; }
-body.cursor-hover #cursor-ring { width: 30px; height: 30px; background: rgba(255,255,255,0.06); }
+body.cursor-hover #cursor-ring { width: 28px; height: 28px; background: rgba(255,255,255,0.06); }
 body.cursor-down #cursor-ring { width: 12px; height: 12px; }
 @media (hover: none) {
   #cursor-dot, #cursor-ring { display: none; }

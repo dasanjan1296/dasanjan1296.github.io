@@ -185,15 +185,18 @@
     const dot  = $('#cursor-dot');
     const ring = $('#cursor-ring');
     if (!dot || !ring) return;
-    let tx=0, ty=0, rx=0, ry=0;
+    let tx = -1000, ty = -1000, rx = -1000, ry = -1000;
+    let primed = false;
     const onMove = (e) => {
       tx = e.clientX; ty = e.clientY;
-      dot.style.transform = `translate(${tx}px, ${ty}px) translate(-50%, -50%)`;
+      if (!primed) { rx = tx; ry = ty; primed = true; }
+      dot.style.transform = `translate3d(${tx}px, ${ty}px, 0) translate(-50%, -50%)`;
     };
     const tick = () => {
-      rx += (tx - rx) * 0.18;
-      ry += (ty - ry) * 0.18;
-      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+      // Strong easing — feels responsive, still smooths jitter
+      rx += (tx - rx) * 0.45;
+      ry += (ty - ry) * 0.45;
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
       requestAnimationFrame(tick);
     };
     addEventListener('mousemove', onMove, { passive: true });
