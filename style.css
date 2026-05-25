@@ -1311,3 +1311,10 @@ h2 .brand-logo, h3 .brand-logo { margin-bottom: 2px; }
   .marquee-track { animation: none; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ---------- Bimi brand color — H1 "Bimi" word in red ---------- */
+.hero-h1 em {
+  color: #FF385C;
+  font-style: normal;
+  font-weight: 700;
+}
