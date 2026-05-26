@@ -957,7 +957,7 @@ h2 .brand-logo, h3 .brand-logo { margin-bottom: 2px; }
   .role-when { font-size: 10px; }
 }
 
-/* ---------- Work extras (Recognition · Patents · Talks) ---------- */
+/* ---------- Work extras (Recognition · Research · Talks) ---------- */
 .work-extras {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
