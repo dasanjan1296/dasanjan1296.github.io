@@ -1,686 +1,153 @@
 <!DOCTYPE html>
-<!--
-  Anjan Das — personal site
-  Inspired by studiotypo.xyz · Space Mono · light/dark theme · canvas dot field
-  Vanilla HTML/CSS/JS — no build step. Edit in GitHub web UI; Pages auto-redeploys.
-
-  Sections:
-    00 INDEX    — hero
-    01 WORK     — Salesforce
-    02 PROJECTS — Saaja / Bimi / AstroMate (carousel)
-    03 RUN      — transformation + Ironman carousel + Marathons carousel
-    04 CONTACT  — links
-
-  Keyboard:
-    T        — toggle theme
-    Cmd+K /  — open command palette
-    ?        — open shortcuts overlay
-    ESC      — close overlay
-    ← →      — navigate focused carousel
--->
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anjan Das — Currently building Bimi. Lead Engineer at Salesforce.</title>
-  <meta name="description" content="Anjan Das — currently building Bimi. Lead Software Engineer, HBase Public Cloud at Salesforce. BITS Pilani CS '19. Ironman 70.3 finisher.">
-
-  <meta name="theme-color" content="#fafaf7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0f1114" media="(prefers-color-scheme: dark)">
-
-  <meta property="og:title" content="Anjan Das">
-  <meta property="og:description" content="Currently building Bimi. Lead Engineer at Salesforce. Ironman 70.3 finisher.">
+  <title>Anjan Das — Engineer, building Bimi</title>
+  <meta name="description" content="Anjan Das. Lead Engineer at Salesforce, building Bimi's cook-booking platform, and Ironman 70.3 finisher.">
+  <meta name="theme-color" content="#f4f1ea">
+  <meta property="og:title" content="Anjan Das — Engineer, building Bimi">
+  <meta property="og:description" content="Distributed systems at Salesforce. Cook booking at Bimi. Long runs in between.">
   <meta property="og:type" content="profile">
-  <meta property="og:image" content="assets/headshot.jpg">
-
+  <meta property="og:url" content="https://dasanjan1296.github.io/">
+  <meta property="og:image" content="https://dasanjan1296.github.io/assets/headshot.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://dasanjan1296.github.io/">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css">
-
-  <!-- Prevent theme flash -->
   <script>
-    (function () {
-      try {
-        var t = localStorage.getItem('anjan-theme');
-        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', t);
-      } catch(e) {}
-    })();
+    try {
+      const saved = localStorage.getItem('anjan-theme');
+      document.documentElement.dataset.theme = saved === 'dark' || saved === 'light'
+        ? saved : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch (_) {}
   </script>
+  <script src="app.js" defer></script>
 </head>
 <body>
-
-  <!-- ============================================================
-       BOOT SCREEN
-       ============================================================ -->
-  <div id="boot" aria-hidden="true">
-    <div class="boot-grid" aria-hidden="true"></div>
-    <div class="boot-scanline" aria-hidden="true"></div>
-    <div class="boot-inner">
-      <div class="boot-stamp">★ NOW BOOTING ★</div>
-      <div class="boot-monogram" data-text="ANJAN.DAS">ANJAN.DAS</div>
-      <div class="boot-tagline">/ <span class="boot-tagline-rotate" id="boot-tagline-rotate">CALIBRATING REALITY</span> /</div>
-      <div class="boot-bar"><div class="boot-bar-fill" id="boot-fill"></div></div>
-      <ul class="boot-log" id="boot-log" aria-hidden="true"></ul>
-      <div class="boot-hint">PRESS <kbd>?</kbd> AFTER BOOT FOR SHORTCUTS</div>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       BACKGROUND CANVAS (dot field)
-       ============================================================ -->
-  <canvas id="bg-canvas" aria-hidden="true"></canvas>
-
-  <!-- ============================================================
-       CUSTOM CURSOR (desktop only)
-       ============================================================ -->
-  <div id="cursor-dot" aria-hidden="true"></div>
-  <div id="cursor-ring" aria-hidden="true"></div>
-
-  <!-- ============================================================
-       SCROLL PROGRESS
-       ============================================================ -->
-  <div id="scroll-progress" aria-hidden="true"></div>
-
-  <!-- ============================================================
-       TOP MARQUEE
-       ============================================================ -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-track">
-      <span>★ IRONMAN 70.3 GOA · OCT 2024</span><span>★ NMDC HYDERABAD MARATHON · 2023 · 2024 · 2025</span><span>★ THE BAREFOOT MARATHON · 2023</span><span>★ LEAD ENGINEER · HBASE PUBLIC CLOUD · SALESFORCE</span><span>★ FOUNDING ENGINEER · INDIA PLATFORM TEAM</span><span>★ FY27 TECH &amp; PRODUCTS ALL-STAR · NOMINEE</span><span>★ WON BEST ETHICAL HACK · COMPANY-WIDE GENAI HACKATHON</span><span>★ BITS PILANI · COMPUTER SCIENCE · 2019</span><span>★ BUILT SAAJA FOODS · LIVE ON AMAZON</span><span>★ BUILT BIMI · ANDROID IN 4 DAYS</span><span>★ BUILT ASTROMATE · EXPO REACT NATIVE</span>
-      <!-- duplicate for seamless loop -->
-      <span>★ IRONMAN 70.3 GOA · OCT 2024</span><span>★ NMDC HYDERABAD MARATHON · 2023 · 2024 · 2025</span><span>★ THE BAREFOOT MARATHON · 2023</span><span>★ LEAD ENGINEER · HBASE PUBLIC CLOUD · SALESFORCE</span><span>★ FOUNDING ENGINEER · INDIA PLATFORM TEAM</span><span>★ FY27 TECH &amp; PRODUCTS ALL-STAR · NOMINEE</span><span>★ WON BEST ETHICAL HACK · COMPANY-WIDE GENAI HACKATHON</span><span>★ BITS PILANI · COMPUTER SCIENCE · 2019</span><span>★ BUILT SAAJA FOODS · LIVE ON AMAZON</span><span>★ BUILT BIMI · ANDROID IN 4 DAYS</span><span>★ BUILT ASTROMATE · EXPO REACT NATIVE</span>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       HEADER
-       ============================================================ -->
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
-    <div class="header-row">
-      <a href="#" class="brand">
-        <span class="brand-dot"></span>
-        <span>anjan.das</span>
-      </a>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="#work">01 / Work</a>
-        <a href="#edu">02 / Education</a>
-        <a href="#projects">03 / Projects</a>
-        <a href="#run">04 / Fitness</a>
-        <a href="#contact">05 / Contact</a>
+    <div class="header-row container">
+      <a class="brand" href="#index" aria-label="Anjan Das, home">anjan.das<span aria-hidden="true">*</span></a>
+      <nav aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#projects">Projects</a>
+        <a href="#run">Outside work</a>
+        <a href="#contact">Contact</a>
       </nav>
-      <div class="header-meta">
-        <span class="status"><span class="status-dot"></span> AVAILABLE</span>
-        <span id="clock" class="clock" aria-live="off">--:-- IST</span>
-        <button id="theme-toggle" class="icon-btn magnetic" aria-label="Toggle theme" title="Toggle theme (T)">
-          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-            <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <line x1="12" y1="2" x2="12" y2="5"/>
-              <line x1="12" y1="19" x2="12" y2="22"/>
-              <line x1="2" y1="12" x2="5" y2="12"/>
-              <line x1="19" y1="12" x2="22" y2="12"/>
-              <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/>
-              <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/>
-              <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/>
-              <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>
-            </g>
-          </svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark theme" hidden>
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none"/></svg>
+      </button>
     </div>
   </header>
 
-  <main>
-
-    <!-- ============================================================
-         00 — HERO
-         ============================================================ -->
-    <section id="index" class="section section-hero">
-      <div class="container">
-        <div class="section-label"><span>00</span><span class="line"></span><span>INDEX</span></div>
-
-        <div class="hero-grid">
-          <div class="hero-text">
-            <h1 class="hero-h1">
-              <span class="reveal-line">Anjan Das.</span>
-              <span class="reveal-line">Lead Engineer at Salesforce.</span>
-              <span class="reveal-line">Ironman 70.3 finisher.</span>
-              <span class="reveal-line">Currently building <em>Bimi</em>.<span class="cursor-blink">_</span></span>
-            </h1>
-
-            <p class="hero-tagline reveal">
-              Lead Member of Technical Staff on Salesforce's distributed-database platform — founding engineer of the India Platform team.
-              Two research works pending patent drafting, one Best Ethical Hack win, and a half-decade of CI/CD &amp; cloud-platform work.
-              BITS Pilani CS '19. Currently building Bimi. Distance running on the side.
-            </p>
-
-            <div class="hero-actions reveal">
-              <a href="#projects" class="btn magnetic">→ See projects</a>
-              <a href="#contact" class="btn btn-ghost magnetic">→ Get in touch</a>
-            </div>
-          </div>
-
-          <div class="hero-photo reveal">
-            <div class="photo-frame">
-              <img src="assets/headshot.jpg" alt="Portrait of Anjan Das" loading="eager">
-              <div class="photo-meta">
-                <span>ANJAN.DAS / 2025</span>
-                <span>★ FILE 01/12</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- stat counters -->
-        <div class="stat-grid reveal" data-counters>
-          <div class="stat">
-            <div class="stat-num"><span class="counter" data-to="7">0</span><span class="stat-unit">yrs</span></div>
-            <div class="stat-label">at Salesforce</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num"><span class="counter" data-to="3">0</span></div>
-            <div class="stat-label">promotions</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num"><span class="counter" data-to="70.3" data-decimals="1">0</span><span class="stat-unit">mi</span></div>
-            <div class="stat-label">Ironman 70.3 Goa</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num"><span class="counter" data-to="42">0</span><span class="stat-unit">kg</span></div>
-            <div class="stat-label">lost · 131 → 89</div>
-          </div>
-        </div>
+  <main id="main">
+    <section id="index" class="hero container" aria-labelledby="intro-title">
+      <div class="hero-copy">
+        <h1 id="intro-title">Anjan Das.</h1>
+        <p class="intro">Engineer. Builder.<br>Always in motion.</p>
+        <p class="hero-description">Lead Engineer at Salesforce. Currently building Bimi, a simpler way to book a cook at home.</p>
+        <div class="hero-links"><a class="button" href="#bimi">Explore Bimi</a><a class="text-link" href="#contact">Get in touch</a></div>
       </div>
+      <figure class="portrait">
+        <img src="assets/headshot.jpg" alt="Portrait of Anjan Das" fetchpriority="high" width="720" height="900">
+        <figcaption>Code, cooking, and the long run.</figcaption>
+      </figure>
     </section>
 
-    <!-- ============================================================
-         01 — WORK
-         ============================================================ -->
-    <section id="work" class="section">
-      <div class="container">
-        <div class="section-label reveal"><span>01</span><span class="line"></span><span>WORK</span></div>
-        <h2 class="section-h2 reveal"><span class="brand-logo"><img src="assets/logos/salesforce.svg" alt="Salesforce" loading="lazy"></span>Salesforce <span class="muted">/ Jun 2019 → present</span></h2>
-
-        <div class="prose reveal">
-          <p class="lead">
-            Lead Member of Technical Staff (LMTS) — HBase Public Cloud. Founding engineer of the team in India.
-            Three promotions over seven years.
-          </p>
-          <p>
-            Public-cloud distributed-systems infrastructure for one of the largest NoSQL fleets at Salesforce.
-            My work spans the HBase + Hadoop stack: CI/CD, release automation, fleet stability, cost / capacity, and
-            the long-running architectural migrations that turn monolithic on-prem services into multi-tenant
-            cloud-native ones on Kubernetes/AWS.
-          </p>
+    <section id="work" class="section container" aria-labelledby="work-title">
+      <h2 id="work-title">What I work on</h2>
+      <article id="bimi" class="bimi-feature" aria-labelledby="bimi-title">
+        <div class="company-heading">
+          <img class="company-logo bimi-logo" src="assets/logos/bimi.png" alt="" width="48" height="48" loading="lazy">
+          <div><h3 id="bimi-title">Bimi</h3><p class="meta">Product &amp; engineering · Currently building</p></div>
         </div>
-
-        <ul class="role-list">
-
-          <li class="role reveal">
-            <div class="role-head">
-              <h3>Lead Member of Technical Staff <span class="muted role-level">/ LMTS</span></h3>
-              <span class="role-when">Feb 2025 → Present · Bengaluru</span>
-            </div>
-            <p class="role-summary">
-              Promoted to Lead Engineer. Leading the architectural migration of Salesforce's distributed-database
-              platform from monolithic deployment to per-service deployment on Kubernetes/AWS, and driving the
-              autoscaling, stability, and observability initiatives that make the service efficient and reliable
-              at cloud scale.
-            </p>
-            <ul class="role-outcomes">
-              <li>⭐ <strong>Nominated for FY27 Tech &amp; Products All-Star Award</strong> (May 2026) — peer write-up</li>
-              <li><strong>Founded the India platform engineering team</strong> — first person to start it, onboarded teammates end-to-end on the cloud-native platform stack; <strong>mentoring 4+ engineers</strong> across autoscaling, AI assistants, distributed storage, JDK upgrades</li>
-              <li><strong>Service decomposition: monolith → per-service deployments.</strong> First services unplugged from the monolith in the FY26 release — unlocked a one-year platform release-moratorium</li>
-              <li>Designed <strong>YARN NodeManager differential autoscaling</strong> — diagnosed the Yo-Yo effect and designed differential HPAs with ordinal-based queue categorization. <strong>~33% per-week YARN cost reduction</strong> in pilot clusters; <strong>research pending patent drafting</strong>, mentored by a senior architect</li>
-              <li>Reclaimed <strong>~1.8 PB of cloud storage</strong> via graceful-shutdown PVC release; <strong>$972K EBS savings</strong></li>
-              <li>Authored <strong>research on stack-based PR validation</strong> for multi-project CI/CD (Aug 2024) — pending patent drafting</li>
-              <li>Initiated and shipped Phase 1 of a fleet-wide Crash Detection framework; designed Phoenix coproc injection via Mutating Admission Webhooks</li>
-            </ul>
-            <ul class="card-tags">
-              <li>Kubernetes</li><li>Helm</li><li>StatefulSets</li><li>AWS</li><li>EBS</li><li>Spinnaker</li><li>HBase</li><li>Apache Phoenix</li><li>Hadoop</li><li>YARN</li><li>HDFS</li>
-            </ul>
-          </li>
-
-          <li class="role reveal">
-            <div class="role-head">
-              <h3>Senior Member of Technical Staff <span class="muted role-level">/ SMTS</span></h3>
-              <span class="role-when">Feb 2022 → Jan 2025 · 3 yrs · Hyderabad</span>
-            </div>
-            <p class="role-summary">
-              Promoted to Senior Software Engineer. Designed and rolled out production frameworks <strong>adopted org-wide by 100+ engineers</strong>,
-              powering one of the largest distributed-database fleets at Salesforce.
-            </p>
-            <ul class="role-outcomes">
-              <li>🏆 <strong>Won Best Ethical Hack</strong> at the company-wide GenAI hackathon — led a 4-person team building an AI knowledge-assistant combining Slack, document-suite, and wiki content. Featured in the company-wide newsletter; demo to senior leadership; 6+ months of cross-org adoption requests</li>
-              <li>Designed and shipped a <strong>feature-branch development framework</strong> for the multi-project distributed-database stack — became the default way the org ships complex changes. Enabled successful upgrades of <strong>Hadoop 3, Kerberos, and ZooKeeper</strong></li>
-              <li>Spearheaded migration of all CI workflows from <strong>legacy datacenter Jenkins to AWS-backed cloud Jenkins</strong></li>
-              <li><strong>6 successful releases in one fiscal year</strong> as release coordinator — consolidated production back to a single stack (single-stack milestone)</li>
-              <li>Led the container OS migration (<strong>CentOS 7 → RHEL 9</strong>) across commercial, sovereign, and regional cloud environments — delivered ahead of program deadline</li>
-              <li>Built a customer self-serve schema-deployment workflow — cut deploy time <strong>from days to hours</strong></li>
-              <li>Root-caused a Sev1 production incident: a 15-minute DFS-client timeout during NameNode failover</li>
-            </ul>
-            <ul class="card-tags">
-              <li>Java</li><li>Groovy</li><li>Python</li><li>Jenkins</li><li>AWS</li><li>Kubernetes</li><li>HBase</li><li>Hadoop</li><li>Kafka</li><li>Apache ZooKeeper</li>
-            </ul>
-          </li>
-
-          <li class="role reveal">
-            <div class="role-head">
-              <h3>Member of Technical Staff <span class="muted role-level">/ MTS</span></h3>
-              <span class="role-when">Aug 2020 → Jan 2022 · 1 yr 6 mos · Hyderabad</span>
-            </div>
-            <p class="role-summary">
-              Promoted to Software Engineer. Designed the team's release-orchestration spine and built foundational
-              CI/CD infrastructure for the distributed-database org.
-            </p>
-            <ul class="role-outcomes">
-              <li>🏆 <strong>Finalist</strong> at the company-wide Availability Hackathon — co-built a release-workflow visualisation platform with a 4-person team</li>
-              <li>Designed and built a <strong>DAG-based workflow-management framework</strong> from scratch that automated the compliance-gated release process — sustained ownership across 5 years; <strong>adopted by 8+ partner workstreams</strong> including external customer-config promotion</li>
-              <li><strong>Migrated the entire CI/CD infrastructure</strong> from on-prem Jenkins to AWS-based Kubernetes — the foundation for every release framework that followed</li>
-              <li>Built artifact conflict detection + on-demand release branch deprecation — adopted by partner teams for their own releases</li>
-            </ul>
-            <ul class="card-tags">
-              <li>Java</li><li>Groovy</li><li>Jenkins</li><li>Docker</li><li>Kubernetes</li><li>AWS</li><li>Apache Bigtop</li><li>Apache Ambari</li>
-            </ul>
-          </li>
-
-          <li class="role reveal">
-            <div class="role-head">
-              <h3>Associate Member of Technical Staff <span class="muted role-level">/ AMTS</span></h3>
-              <span class="role-when">Jun 2019 → Jul 2020 · 1 yr 2 mos · Hyderabad</span>
-            </div>
-            <p class="role-summary">
-              Joined Salesforce as a new graduate on the developer-productivity team for the distributed-database org.
-            </p>
-            <ul class="role-outcomes">
-              <li>🏆 <strong>Won Bigdata Management Hack Day (FY20)</strong> — built a release-visibility dashboard on the Salesforce platform with audit-trail subscriptions and dashboard-chatter integration</li>
-              <li>Established the modular CI test framework (<strong>Spock + JenkinsPipelineUnit + JaCoCo</strong>) and the auto-discovery PR validation pipeline — the foundation for safe iteration on a system used by the entire org</li>
-              <li>Re-architected the <strong>Apache Ambari release pipeline</strong> from scratch — separated daily and release builds for the first time</li>
-              <li>Authored the original release-automation library that later evolved into the team's full release-orchestration framework</li>
-            </ul>
-            <ul class="card-tags">
-              <li>Java</li><li>Groovy</li><li>Spock</li><li>JaCoCo</li><li>Jenkins</li><li>Apache Bigtop</li><li>Apache Ambari</li>
-            </ul>
-          </li>
-
+        <p class="feature-intro">A cook at home, booked around your meal.</p>
+        <p>I’m building Bimi Insta across web, iOS and Android: choose dishes, pick a time, and book a cook. Behind the app, I’m building the payments, refunds and tools that keep daily operations running.</p>
+        <ul class="highlights">
+          <li><strong>Booking from start to finish.</strong> Dish discovery, scheduling, checkout and booking updates.</li>
+          <li><strong>The operational backbone.</strong> Cook assignment, payment recovery, refunds, wallet and referrals.</li>
+          <li><strong>A catalog of 537 dishes.</strong> Explicit pricing, ingredient lists and optimized food imagery.</li>
         </ul>
-
-        <!-- Recognition / Research / Talks sub-block -->
-        <h3 class="sub-h3 reveal">Recognition · research · talks</h3>
-        <div class="work-extras">
-
-          <article class="card extras-card reveal">
-            <div class="extras-head">
-              <span class="extras-icon">🏆</span>
-              <h4>Recognition</h4>
-            </div>
-            <ul class="extras-list">
-              <li><strong>FY27 Tech &amp; Products All-Star Award</strong> — <span class="muted">Nominee, May 2026</span><div class="extras-sub">~3,000-word peer write-up</div></li>
-              <li><strong>Best Ethical Hack</strong> — <span class="muted">Company-wide GenAI Hackathon, FY24</span><div class="extras-sub">Newsletter mention · executive demo · 6+ months of cross-org adoption requests</div></li>
-              <li><strong>Winner — Bigdata Management Hack Day</strong> — <span class="muted">FY20</span><div class="extras-sub">Release-visibility dashboard</div></li>
-              <li><strong>Finalist — Availability Hackathon</strong> — <span class="muted">FY21</span><div class="extras-sub">Release-workflow visualisation platform</div></li>
-              <li><strong>Trailhead Ranger</strong> — <span class="muted">Salesforce learning rank, Jan 2024</span></li>
-            </ul>
-          </article>
-
-          <article class="card extras-card reveal">
-            <div class="extras-head">
-              <span class="extras-icon">📜</span>
-              <h4>Research <span class="muted">(pending patent drafting)</span></h4>
-            </div>
-            <ul class="extras-list">
-              <li>
-                <strong>Stack-based PR validation for multi-project CI/CD</strong>
-                <div class="extras-sub">Research authored Aug 2024 · pending patent drafting. Prevents merging incompatible changes across forks of multiple distributed-system projects via stack-based pre-merge validation.</div>
-              </li>
-              <li>
-                <strong>YARN Differential Autoscaling</strong>
-                <div class="extras-sub">Research in design · production-validated · pending patent drafting · mentored by a senior architect. Mitigates the Yo-Yo effect via ordinal-based node categorization, differential HPAs per workload type, and auto-classification of incoming jobs.</div>
-              </li>
-            </ul>
-            <div class="extras-foot">
-              <span class="muted">Engineering blog draft in progress: </span>
-              <em>"Autoscaling YARN on AWS"</em>
-            </div>
-          </article>
-
-          <article class="card extras-card reveal">
-            <div class="extras-head">
-              <span class="extras-icon">🎤</span>
-              <h4>Selected talks</h4>
-            </div>
-            <ul class="extras-list">
-              <li><strong>Open Mic</strong> · <em>Developer Productivity story</em><div class="extras-sub">Company technology-tour event, Bangalore, FY24</div></li>
-              <li><strong>Tech talk</strong> · <em>CI/CD on Git for multi-project distributed systems</em><div class="extras-sub">Internal Git-enablement camp</div></li>
-              <li><strong>Community of Practice</strong> · <em>Apache Luigi Workflow Engine</em></li>
-              <li><strong>Architecture Forum</strong> · <em>Service Decomposition design</em><div class="extras-sub">Proposal approved</div></li>
-              <li><strong>Deep Dive Forums</strong> · <em>Coprocessor Injection · Self-Service Schema · feature-branch framework</em></li>
-              <li><strong>Hackathon Grand Finale</strong> · <em>Company-wide GenAI Hackathon</em></li>
-            </ul>
-          </article>
-
+        <p class="stack">React Native / Expo, FastAPI, PostgreSQL, AWS</p>
+        <div class="bimi-bottom">
+          <div class="release-status"><p><span class="live-dot" aria-hidden="true"></span>Web and Android live · iOS in TestFlight</p><p class="meta">Latest iOS and Android updates in store review.<br><time datetime="2026-10-28">As of 28 October 2026</time></p></div>
+          <a class="button" href="https://app.trybimi.in/" target="_blank" rel="noopener noreferrer">Visit Bimi</a>
         </div>
+      </article>
+
+      <article class="salesforce" aria-labelledby="salesforce-title">
+        <div class="company-heading">
+          <img class="company-logo" src="assets/logos/salesforce.svg" alt="" width="62" height="44" loading="lazy">
+          <div><h3 id="salesforce-title">Salesforce</h3><p class="meta">Lead Member of Technical Staff · June 2019–present</p></div>
+        </div>
+        <p>Founding engineer of the India platform team for HBase Public Cloud. I build the infrastructure that helps distributed databases ship safely and run efficiently.</p>
+        <ul class="impact-list">
+          <li><strong>$972K</strong><span>EBS savings from reclaiming ~1.8 PB of storage</span></li>
+          <li><strong>~33%</strong><span>weekly YARN cost reduction in pilot clusters</span></li>
+          <li><strong>100+</strong><span>engineers using the development frameworks I built</span></li>
+        </ul>
+        <details class="career-details">
+          <summary>Career progression &amp; selected work</summary>
+          <div class="details-content">
+            <ol class="timeline">
+              <li><div class="role-heading"><h4>Lead Member of Technical Staff</h4><span class="meta">Feb 2025–present</span></div><p>Leading the move to per-service deployments on Kubernetes and AWS. Built the India platform team, mentor 4+ engineers, and work on autoscaling, fleet stability and observability.</p></li>
+              <li><div class="role-heading"><h4>Senior Member of Technical Staff</h4><span class="meta">Feb 2022–Jan 2025</span></div><p>Shipped the feature-branch framework for the distributed-database stack, moved CI to cloud Jenkins, and led the CentOS 7 to RHEL 9 migration. Led a four-person team to Best Ethical Hack at the company-wide GenAI hackathon.</p></li>
+              <li><div class="role-heading"><h4>Member of Technical Staff</h4><span class="meta">Aug 2020–Jan 2022</span></div><p>Built the release-orchestration framework adopted by 8+ partner workstreams and migrated CI/CD to AWS-backed Kubernetes.</p></li>
+              <li><div class="role-heading"><h4>Associate Member of Technical Staff</h4><span class="meta">Jun 2019–Jul 2020</span></div><p>Built the team's CI test framework and release-automation foundations. Won the FY20 Bigdata Management Hack Day.</p></li>
+            </ol>
+            <p class="detail-note"><strong>Recognition &amp; research:</strong> FY27 Tech &amp; Products All-Star nominee. Research on stack-based PR validation and YARN differential autoscaling, both pending patent drafting.</p>
+          </div>
+        </details>
+      </article>
+
+      <div id="edu" class="education">
+        <img src="assets/logos/bits-pilani.svg" alt="" width="42" height="48" loading="lazy">
+        <div><h3>BITS Pilani</h3><p>Computer Science, 2015–2019</p><p class="meta">Earlier: blockchain identity at Cisco; computer vision and geospatial research at CEERI and NESAC.</p></div>
       </div>
     </section>
 
-    <!-- ============================================================
-         02 — EDUCATION & EARLY CAREER
-         ============================================================ -->
-    <section id="edu" class="section section-alt">
-      <div class="container">
-        <div class="section-label reveal"><span>02</span><span class="line"></span><span>EDUCATION</span></div>
-        <h2 class="section-h2 reveal">Where I started</h2>
-
-        <article class="card reveal">
-          <div class="role-head">
-            <h3><span class="brand-logo brand-logo-md"><img src="assets/logos/bits-pilani.svg" alt="BITS Pilani" loading="lazy"></span>Birla Institute of Technology and Science, Pilani <span class="muted role-level">/ BITS Pilani</span></h3>
-            <span class="role-when">2015 → 2019 · Pilani</span>
-          </div>
-          <p class="role-summary">
-            Bachelor's Degree, Computer Science. Active in the Student Union.
-            Spent the final two years on research and internships in machine learning,
-            computer vision, and blockchain identity systems before joining Salesforce as a new grad.
-          </p>
-          <ul class="card-tags" style="margin-top: 14px;">
-            <li>Trailhead Ranger · Jan 2024</li>
-          </ul>
+    <section id="projects" class="section container" aria-labelledby="projects-title">
+      <h2 id="projects-title">Other things I’ve built</h2>
+      <div class="project-grid">
+        <article class="project">
+          <img src="assets/logos/saaja.svg" alt="" width="48" height="48" loading="lazy">
+          <h3>Saaja Foods</h3>
+          <p>The e-commerce stack for a nut-butter brand, from storefront and payments to Amazon integration.</p>
+          <a class="text-link" href="https://www.saajafoods.com" target="_blank" rel="noopener noreferrer">Visit Saaja Foods</a>
         </article>
-
-        <h3 class="sub-h3 reveal">Pre-Salesforce experience</h3>
-        <ul class="early-list reveal">
-          <li>
-            <div class="early-when">Jul 2018 – Dec 2018</div>
-            <div class="early-what">
-              <strong><span class="brand-logo brand-logo-sm"><img src="assets/logos/cisco.svg" alt="Cisco" loading="lazy"></span>Cisco Systems (India)</strong> — Software Development Intern, Bangalore
-              <p>Built an end-to-end blockchain-based identity management solution for people, organizations, and IoT devices to transact securely.</p>
-            </div>
-          </li>
-          <li>
-            <div class="early-when">Apr 2017 – May 2018</div>
-            <div class="early-what">
-              <strong><span class="brand-logo brand-logo-sm"><img src="assets/logos/ceeri.png" alt="CEERI" loading="lazy"></span>CEERI Pilani</strong> — Project Assistant (Apprenticeship)
-              <p>Machine learning research on high-speed vision algorithms under Scientist Pramod Kr. Tanwar at the Central Electronics Engineering Research Institute.</p>
-            </div>
-          </li>
-          <li>
-            <div class="early-when">May 2017 – Jul 2017</div>
-            <div class="early-what">
-              <strong><span class="brand-logo brand-logo-sm"><img src="assets/logos/nesac.png" alt="NESAC" loading="lazy"></span>NESAC</strong> — Summer Intern, Meghalaya
-              <p>Built a platform-independent geo-registration tool for LANDSAT imagery using GDAL at the North Eastern Space Applications Centre. <a href="https://github.com/dasanjan1296/AutoRegistrationTool" target="_blank" rel="noopener">Open-source repo →</a></p>
-            </div>
-          </li>
-          <li>
-            <div class="early-when">Jan 2017 – May 2017</div>
-            <div class="early-what">
-              <strong>BITS Pilani Research</strong> — Project Assistant
-              <p>Advanced object detection algorithms using machine learning, under Dr. Kamlesh Tiwari (CSIS Dept.).</p>
-            </div>
-          </li>
-        </ul>
+        <article class="project">
+          <img src="assets/logos/astromate.png" alt="" width="48" height="48" loading="lazy">
+          <h3>AstroMate</h3>
+          <p>An astrology-inspired dating app prototype, built with Expo and React Native.</p>
+          <span class="meta">Private prototype</span>
+        </article>
       </div>
     </section>
 
-    <!-- ============================================================
-         03 — PROJECTS
-         ============================================================ -->
-    <section id="projects" class="section">
-      <div class="container">
-        <div class="section-label reveal"><span>03</span><span class="line"></span><span>PROJECTS</span></div>
-        <h2 class="section-h2 reveal">What I'm building</h2>
-        <p class="section-sub reveal muted">
-          Drag, swipe, hit <kbd>←</kbd> <kbd>→</kbd>, or use the buttons below. <span class="muted">/ 03 items</span>
-        </p>
-
-        <div class="carousel" data-carousel data-carousel-name="projects" tabindex="0" aria-roledescription="carousel">
-          <div class="carousel-viewport">
-            <div class="carousel-track">
-
-              <article class="card project-card">
-                <div class="card-num">01</div>
-                <h3><span class="brand-logo"><img src="assets/logos/saaja.svg" alt="Saaja Foods" loading="lazy"></span>Saaja Foods</h3>
-                <p class="card-meta">D2C nut-butter brand · live business</p>
-                <p>
-                  Built the full e-commerce stack — site, cart, payments, Amazon storefront integration,
-                  blog, recipes, product pages, FAQ, reviews carousel. ~500 customers,
-                  FSSAI-certified, live on Amazon. Blinkit + Swiggy Instamart launches in progress.
-                </p>
-                <ul class="card-tags">
-                  <li>e-commerce</li><li>Amazon</li><li>FSSAI</li><li>D2C food</li>
-                </ul>
-                <a class="card-link magnetic" href="https://www.saajafoods.com" target="_blank" rel="noopener">saajafoods.com ↗</a>
-              </article>
-
-              <article class="card project-card">
-                <div class="card-num">02</div>
-                <h3><span class="brand-logo brand-logo-icon"><img src="assets/logos/bimi.png" alt="Bimi" loading="lazy"></span>Bimi</h3>
-                <p class="card-meta">Household coordination app · in progress</p>
-                <p>
-                  An AI coordination layer for households with a home cook.
-                  Started as a WhatsApp workflow in my own house during Ironman training;
-                  shipped the Android app in 4 days.
-                </p>
-                <ul class="card-tags">
-                  <li>React Native</li><li>FastAPI</li><li>Postgres</li><li>Fly.io</li><li>WhatsApp</li>
-                </ul>
-                <a class="card-link magnetic" href="https://trybimi.in" target="_blank" rel="noopener">trybimi.in ↗</a>
-              </article>
-
-              <article class="card project-card">
-                <div class="card-num">03</div>
-                <h3><span class="brand-logo brand-logo-icon"><img src="assets/logos/astromate.png" alt="AstroMate" loading="lazy"></span>AstroMate</h3>
-                <p class="card-meta">Astrology-driven dating app · prototype</p>
-                <p>
-                  <em>Swipe written in the stars.</em> iOS-first design, Android-first build on Expo React Native.
-                  Live-tested over 4 build → test → fix iterations on Pixel 7 emulator. Zero P0/P1 open;
-                  47 interactive controls validated end to end.
-                </p>
-                <ul class="card-tags">
-                  <li>Expo</li><li>React Native</li><li>TypeScript</li><li>design system</li>
-                </ul>
-                <span class="card-link muted">private build</span>
-              </article>
-
-            </div>
-          </div>
-          <div class="carousel-controls">
-            <button class="carousel-btn" data-carousel-prev aria-label="Previous">←</button>
-            <div class="carousel-dots" data-carousel-dots></div>
-            <button class="carousel-btn" data-carousel-next aria-label="Next">→</button>
-          </div>
-        </div>
+    <section id="run" class="section container" aria-labelledby="run-title">
+      <div class="section-intro"><h2 id="run-title">The long run</h2><p>From 131 kg to 89 kg, then across the Ironman 70.3 Goa finish line in October 2024. Running, riding and swimming have been part of life ever since.</p></div>
+      <div class="gallery" role="region" aria-label="Running and triathlon photographs" tabindex="0">
+        <figure><img src="assets/ironman-finish.jpg" alt="Anjan at the Ironman 70.3 India finish line, arms raised" loading="lazy" width="720" height="900"><figcaption>Ironman 70.3 Goa, 2024</figcaption></figure>
+        <figure><img src="assets/transformation.jpg" alt="Anjan's transformation from 131 kg to 89 kg" loading="lazy" width="720" height="900"><figcaption>Four years. 42 kg. A different life.</figcaption></figure>
+        <figure><img src="assets/marathon-2025.jpg" alt="Anjan with a friend at the Hyderabad Marathon start line" loading="lazy" width="720" height="900"><figcaption>Hyderabad Marathon, 2025</figcaption></figure>
+        <figure><img src="assets/barefoot-marathon.jpg" alt="Anjan at the Barefoot Marathon with Milind Soman" loading="lazy" width="720" height="900"><figcaption>Barefoot Marathon, 2023</figcaption></figure>
+        <figure><img src="assets/ironman-chute.jpg" alt="Anjan running through the Ironman finish chute" loading="lazy" width="720" height="900"><figcaption>The final stretch in Goa</figcaption></figure>
+        <figure><img src="assets/ironman-medal.jpg" alt="Ironman 70.3 finisher medal and race wristbands" loading="lazy" width="720" height="900"><figcaption>A reminder to keep going</figcaption></figure>
       </div>
+      <div class="gallery-controls" hidden><button type="button" data-gallery-prev aria-label="Previous photographs">←</button><button type="button" data-gallery-next aria-label="Next photographs">→</button></div>
     </section>
 
-    <!-- ============================================================
-         04 — FITNESS
-         ============================================================ -->
-    <section id="run" class="section section-alt">
-      <div class="container">
-        <div class="section-label reveal"><span>04</span><span class="line"></span><span>FITNESS</span></div>
-        <h2 class="section-h2 reveal">Run, ride, swim, repeat.</h2>
-
-        <!-- Transformation -->
-        <div class="run-block reveal">
-          <div class="run-block-text">
-            <h3>131 kg <span class="arrow">→</span> 89 kg</h3>
-            <p>
-              In 2020, head-down at work, I let my health slip. One morning a back injury
-              left me with temporary lower-body paralysis. The doctor said my body was the cause.
-              That was the day I changed how I lived. Four years and 42 kg later I finished
-              Ironman 70.3 Goa.
-            </p>
-          </div>
-          <figure class="run-block-photo">
-            <img src="assets/transformation.jpg" alt="Before and after weight loss — 131 kg to 89 kg" loading="lazy">
-            <figcaption>Before · after</figcaption>
-          </figure>
-        </div>
-
-        <!-- Ironman carousel -->
-        <h3 class="sub-h3 reveal"><span class="brand-logo"><img src="assets/logos/ironman.svg" alt="Ironman 70.3" loading="lazy"></span>Ironman 70.3 Goa · October 2024</h3>
-        <p class="muted reveal">1.9 km swim · 90 km bike · 21.1 km run. Eight months of training.</p>
-
-        <div class="carousel carousel-photo" data-carousel data-carousel-name="ironman" tabindex="0">
-          <div class="carousel-viewport">
-            <div class="carousel-track">
-              <figure class="photo-slide">
-                <img src="assets/ironman-finish.jpg" alt="Anjan Das at Ironman 70.3 India finish line, arms raised" loading="lazy">
-                <figcaption><span>FRAME 01</span> Finish line. Arms up. Bib 1061.</figcaption>
-              </figure>
-              <figure class="photo-slide">
-                <img src="assets/ironman-chute.jpg" alt="Anjan running down the finish chute with international flags" loading="lazy">
-                <figcaption><span>FRAME 02</span> Finish chute · international flags.</figcaption>
-              </figure>
-              <figure class="photo-slide">
-                <img src="assets/ironman-medal.jpg" alt="Ironman 70.3 finisher medal closeup with race wristbands" loading="lazy">
-                <figcaption><span>FRAME 03</span> Finisher medal · &ldquo;Triathletes don't quit.&rdquo;</figcaption>
-              </figure>
-              <figure class="photo-slide">
-                <img src="assets/ironman-kit.jpg" alt="Pre-race transition kit — helmet, tri-suit, bags, bib 1061" loading="lazy">
-                <figcaption><span>FRAME 04</span> Race-morning kit. T1 / T2 bags. Bib 1061.</figcaption>
-              </figure>
-              <figure class="photo-slide">
-                <img src="assets/ironman-towel.jpg" alt="Anjan holding the Ironman 70.3 India FINISHER 2024 towel" loading="lazy">
-                <figcaption><span>FRAME 05</span> Finisher towel · 2024.</figcaption>
-              </figure>
-            </div>
-          </div>
-          <div class="carousel-controls">
-            <button class="carousel-btn" data-carousel-prev aria-label="Previous">←</button>
-            <div class="carousel-dots" data-carousel-dots></div>
-            <button class="carousel-btn" data-carousel-next aria-label="Next">→</button>
-          </div>
-        </div>
-
-        <!-- Marathon carousel -->
-        <h3 class="sub-h3 reveal"><span class="brand-logo"><img src="assets/logos/nmdc.svg" alt="NMDC" loading="lazy"></span>Marathons</h3>
-        <p class="muted reveal">Barefoot Marathon 2023 (3rd Edition) with Milind Soman. NMDC Hyderabad — 2023, 2024, 2025. Half-marathon PR: 2:43 at 7:41/km pace (2024). In Aug 2025 I paced a friend to their first finish at Hyderabad Marathon.</p>
-
-        <div class="carousel carousel-photo" data-carousel data-carousel-name="marathons" tabindex="0">
-          <div class="carousel-viewport">
-            <div class="carousel-track">
-              <figure class="photo-slide">
-                <img src="assets/barefoot-marathon.jpg" alt="Barefoot Marathon 2023 with Milind Soman" loading="lazy">
-                <figcaption><span>BAREFOOT 2023</span> With Milind Soman.</figcaption>
-              </figure>
-              <figure class="photo-slide">
-                <img src="assets/marathon-2024-action.jpg" alt="Anjan running NMDC Hyderabad Half Marathon 2024" loading="lazy">
-                <figcaption><span>NMDC 2024</span> Half marathon · in-training for Ironman.</figcaption>
-              </figure>
-              <figure class="photo-slide">
-                <img src="assets/marathon-2024-stats.jpg" alt="NMDC Hyderabad Marathon 2024 — 21.3 km, 7:41/km, 2h 43m" loading="lazy">
-                <figcaption><span>NMDC 2024</span> 21.3 km · 7:41/km · 2h 43m.</figcaption>
-              </figure>
-              <figure class="photo-slide">
-                <img src="assets/marathon-2025.jpg" alt="NMDC Hyderabad Marathon 2025 with friend at start line" loading="lazy">
-                <figcaption><span>NMDC 2025</span> Pre-race start line.</figcaption>
-              </figure>
-              <figure class="photo-slide">
-                <img src="assets/marathon-2023.jpg" alt="NMDC Hyderabad Marathon 2023 — I'm a 10K finisher" loading="lazy">
-                <figcaption><span>NMDC 2023</span> 10K finisher.</figcaption>
-              </figure>
-            </div>
-          </div>
-          <div class="carousel-controls">
-            <button class="carousel-btn" data-carousel-prev aria-label="Previous">←</button>
-            <div class="carousel-dots" data-carousel-dots></div>
-            <button class="carousel-btn" data-carousel-next aria-label="Next">→</button>
-          </div>
-        </div>
-
-      </div>
+    <section id="contact" class="section contact container" aria-labelledby="contact-title">
+      <h2 id="contact-title">Let’s talk.</h2>
+      <a class="email-link" href="mailto:dasanjan1296@gmail.com">dasanjan1296@gmail.com</a>
+      <div class="social-links"><a href="https://www.linkedin.com/in/dasanjan1296/" target="_blank" rel="noopener noreferrer">LinkedIn</a><a href="https://github.com/dasanjan1296" target="_blank" rel="noopener noreferrer">GitHub</a></div>
     </section>
-
-    <!-- ============================================================
-         05 — CONTACT
-         ============================================================ -->
-    <section id="contact" class="section">
-      <div class="container">
-        <div class="section-label reveal"><span>05</span><span class="line"></span><span>CONTACT</span></div>
-        <h2 class="section-h2 reveal">Let's talk.</h2>
-
-        <ul class="contact-list reveal">
-          <li>
-            <span class="contact-label">EMAIL</span>
-            <a class="magnetic" href="mailto:dasanjan1296@gmail.com">dasanjan1296@gmail.com</a>
-          </li>
-          <li>
-            <span class="contact-label">LINKEDIN</span>
-            <a class="magnetic" href="https://www.linkedin.com/in/dasanjan1296/" target="_blank" rel="noopener">linkedin.com/in/dasanjan1296 ↗</a>
-          </li>
-          <li>
-            <span class="contact-label">GITHUB</span>
-            <a class="magnetic" href="https://github.com/dasanjan1296" target="_blank" rel="noopener">github.com/dasanjan1296 ↗</a>
-          </li>
-          <li>
-            <span class="contact-label">SAAJA FOODS</span>
-            <a class="magnetic" href="https://www.saajafoods.com" target="_blank" rel="noopener">saajafoods.com ↗</a>
-          </li>
-        </ul>
-      </div>
-    </section>
-
   </main>
-
-  <footer class="site-footer">
-    <div class="container footer-row">
-      <span>© Anjan Das · Hosted on GitHub Pages</span>
-      <span class="muted">Press <kbd>?</kbd> for shortcuts · <kbd>T</kbd> theme · <kbd>⌘K</kbd> palette</span>
-    </div>
-  </footer>
-
-  <!-- ============================================================
-       COMMAND PALETTE
-       ============================================================ -->
-  <div id="palette" class="overlay" aria-hidden="true">
-    <div class="palette-card" role="dialog" aria-modal="true" aria-label="Command palette">
-      <div class="palette-input-row">
-        <span class="palette-prompt">&gt;</span>
-        <input id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Type to navigate · index · work · projects · run · contact">
-        <button class="palette-close" aria-label="Close" data-overlay-close>ESC</button>
-      </div>
-      <ul id="palette-results" class="palette-results"></ul>
-      <div class="palette-foot muted">
-        <span>↑↓ navigate</span><span>↵ select</span><span>esc close</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       SHORTCUTS OVERLAY
-       ============================================================ -->
-  <div id="shortcuts" class="overlay" aria-hidden="true">
-    <div class="palette-card" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
-      <div class="palette-input-row">
-        <span class="palette-prompt">?</span>
-        <span style="flex:1">KEYBOARD SHORTCUTS</span>
-        <button class="palette-close" aria-label="Close" data-overlay-close>ESC</button>
-      </div>
-      <ul class="shortcut-list">
-        <li><kbd>T</kbd><span>Toggle light / dark theme</span></li>
-        <li><kbd>⌘</kbd><kbd>K</kbd><span>Open command palette</span></li>
-        <li><kbd>/</kbd><span>Open command palette</span></li>
-        <li><kbd>?</kbd><span>This overlay</span></li>
-        <li><kbd>ESC</kbd><span>Close any overlay</span></li>
-        <li><kbd>←</kbd><kbd>→</kbd><span>Navigate focused carousel</span></li>
-        <li><kbd>G</kbd><kbd>I</kbd><span>Jump to Index</span></li>
-        <li><kbd>G</kbd><kbd>W</kbd><span>Jump to Work</span></li>
-        <li><kbd>G</kbd><kbd>E</kbd><span>Jump to Education</span></li>
-        <li><kbd>G</kbd><kbd>P</kbd><span>Jump to Projects</span></li>
-        <li><kbd>G</kbd><kbd>R</kbd><span>Jump to Fitness</span></li>
-        <li><kbd>G</kbd><kbd>C</kbd><span>Jump to Contact</span></li>
-      </ul>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
+  <footer class="container"><span>© Anjan Das</span><a href="#index">Back to top</a></footer>
 </body>
 </html>
